@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomainHub - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body class="flex h-screen">
+    <aside id="admin-sidebar" class="sidebar w-64 bg-gray-900 text-gray-300 p-6 space-y-6 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:relative z-40">
+        <a href="#" class="flex items-center space-x-3 text-2xl font-semibold text-white">
+            <svg class="h-10 w-auto text-white" viewBox="0 0 169.83 211.95" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <path d="M49.47,211.95c37.22-3.11,62.5-21.47,62.12-61.35-.07-19.65-9.74-41.09-28.47-48.12v-.65c16.29-9.44,24.97-24.59,24.71-45.29C107.16,17.8,80.73-.44,40,0h129.82v211.94H49.47Z"/>
+                    <path d="M65.65,148.72c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                    <path d="M65.65,63.78c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                </g>
+            </svg>
+            <span>Admin Panel</span>
+        </a>
+        <nav class="space-y-2 flex-1">
+            <a href="#admin-dashboard" id="nav-admin-dashboard" class="nav-item active-admin-nav group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="admin-dashboard-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Dashboard
+            </a>
+            <a href="#pending-requests" id="nav-pending-requests" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="pending-requests-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Pending Requests
+            </a>
+            <a href="#all-domains" id="nav-all-domains" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="all-domains-admin-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                All Domains
+            </a>
+            <a href="#all-clients" id="nav-all-clients" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="all-clients-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Clients
+            </a>
+             <a href="#admin-billing" id="nav-admin-billing" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="admin-billing-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Billing / Invoices
+            </a>
+            <a href="#support-tickets-admin" id="nav-support-tickets-admin" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md">
+                <svg id="support-tickets-admin-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Support Tickets
+            </a>
+        </nav>
+        <div>
+            <a href="{{ url_for('logout') }}" id="admin-logout-link" class="nav-item group flex items-center px-3 py-2.5 text-sm font-medium rounded-md hover:bg-red-700 hover:text-white">
+                <svg id="admin-logout-icon" class="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="p-4 flex justify-between items-center">
+            <button id="admin-menu-button" class="md:hidden focus:outline-none">
+                <svg id="admin-menu-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+            </button>
+            <h1 id="admin-page-title" class="text-xl font-semibold">Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                 <div class="relative">
+                    <button id="admin-notification-bell-button" class="text-gray-400 hover:text-white focus:outline-none">
+                        <svg id="admin-notification-bell-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                        <span id="admin-notification-count-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
+                    </button>
+                    <div id="admin-notification-dropdown-panel" class="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 hidden">
+                        <div class="p-3 border-b border-gray-700 flex justify-between items-center">
+                            <h3 class="text-sm font-semibold text-gray-200">Admin Notifications</h3>
+                            <button id="admin-mark-all-notifications-read-button" class="text-xs text-indigo-400 hover:text-indigo-300 focus:outline-none">Mark all as read</button>
+                        </div>
+                        <ul id="admin-notification-items-list" class="divide-y divide-gray-700">
+                            <li class="p-3 text-center text-gray-500 text-sm">No new notifications.</li>
+                        </ul>
+                         <div class="p-2 text-center border-t border-gray-700">
+                            <a href="#" id="admin-view-all-notifications-link" class="text-xs text-indigo-400 hover:text-indigo-300">View all (Future)</a>
+                        </div>
+                    </div>
+                </div>
+                <span id="admin-username-display" class="text-sm">Admin User</span>
+                 <img src="https://placehold.co/40x40/1F2937/E5E7EB?text=A" alt="Admin Avatar" id="admin-avatar-img" class="w-8 h-8 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1F2937/E5E7EB?text=A';">
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+            <section id="admin-dashboard-section" class="content-section space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Registrations</p>
+                        <p id="admin-pending-registrations-count" class="text-3xl font-bold text-indigo-600">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Renewals</p>
+                        <p id="admin-pending-renewals-count" class="text-3xl font-bold text-indigo-600">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Auto-Renew Changes</p>
+                        <p id="admin-pending-auto-renew-changes-count" class="text-3xl font-bold text-yellow-500">0</p> </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Lock Changes</p>
+                        <p id="admin-pending-lock-changes-count" class="text-3xl font-bold text-blue-500">0</p> </div>
+                    
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Open Support Tickets</p>
+                        <p id="admin-open-tickets-count" class="text-3xl font-bold text-red-600">0</p>
+                    </div>
+                     <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Transfer-In</p>
+                        <p id="admin-pending-transfers-in-count" class="text-3xl font-bold text-purple-600">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Transfer-Out</p>
+                        <p id="admin-pending-transfers-out-count" class="text-3xl font-bold text-purple-600">0</p>
+                    </div>
+                     <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Internal Transfers</p>
+                        <p id="admin-pending-internal-transfers-count" class="text-3xl font-bold text-teal-500">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending DNS Changes</p>
+                        <p id="admin-pending-dns-count" class="text-3xl font-bold text-cyan-600">0</p>
+                    </div>
+                     <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Contact Updates</p>
+                        <p id="admin-pending-contact-updates-count" class="text-3xl font-bold text-orange-600">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Payment Proofs</p>
+                        <p id="admin-pending-payment-proofs-count" class="text-3xl font-bold text-green-500">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Total Managed Domains</p>
+                        <p id="admin-total-domains-count" class="text-3xl font-bold text-gray-700">0</p>
+                    </div>
+                     <div class="admin-stat-card">
+                        <p class="text-sm font-medium text-gray-500 uppercase">Total Clients</p>
+                        <p id="admin-total-clients-count" class="text-3xl font-bold text-gray-700">0</p>
+                    </div>
+                </div>
+                <div class="mt-8 p-6 rounded-xl shadow-lg overview-section">
+                    <h2 class="text-lg font-semibold mb-4">Recent Pending Items Overview</h2>
+                    <div id="admin-recent-pending-overview-list" class="space-y-3">
+                         <p class="placeholder-text col-span-full">Loading recent pending items...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pending-requests-section"  class="content-section hidden">
+                <div class="mb-4 border-b border-gray-700">
+                    <nav class="-mb-px flex space-x-1 sm:space-x-2 md:space-x-4 overflow-x-auto text-xs sm:text-sm" aria-label="Tabs">
+                        <button data-tab-target="pending-registrations-tab" class="tab-button active whitespace-nowrap">Registrations</button>
+                        <button data-tab-target="pending-renewals-tab" class="tab-button whitespace-nowrap">Renewals</button>
+                        <button data-tab-target="pending-auto-renew-tab" class="tab-button whitespace-nowrap">Auto-Renew</button>
+                        <button data-tab-target="pending-lock-change-tab" class="tab-button whitespace-nowrap">Domain Lock</button>
+                        <button data-tab-target="pending-transfers-in-tab" class="tab-button whitespace-nowrap">Transfer-In</button>
+                        <button data-tab-target="pending-transfers-out-tab" class="tab-button whitespace-nowrap">Transfer-Out</button>
+                        <button data-tab-target="pending-internal-transfers-tab" class="tab-button whitespace-nowrap">Internal Transfers</button>
+                        <button data-tab-target="pending-dns-changes-tab" class="tab-button whitespace-nowrap">DNS Changes</button>
+                        <button data-tab-target="pending-contact-updates-tab" class="tab-button whitespace-nowrap">Contact Updates</button>
+                        <button data-tab-target="pending-payment-proofs-tab" class="tab-button whitespace-nowrap">Payment Proofs</button>
+                    </nav>
+                </div>
+                <div id="pending-registrations-tab" class="tab-content active">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Domain Registrations</h2>
+                    <div id="pending-registrations-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading registration requests...</p>
+                    </div>
+                </div>
+                <div id="pending-renewals-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Domain Renewals</h2>
+                    <div id="pending-renewals-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading renewal requests...</p>
+                    </div>
+                </div>
+                <div id="pending-auto-renew-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Auto-Renew Changes</h2>
+                    <div id="pending-auto-renew-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading auto-renew change requests...</p>
+                    </div>
+                </div>
+                <div id="pending-lock-change-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Domain Lock Changes</h2>
+                    <div id="pending-lock-change-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading domain lock change requests...</p>
+                    </div>
+                </div>
+                <div id="pending-transfers-in-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Domain Transfers-In</h2>
+                    <div id="pending-transfers-in-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading transfer-in requests...</p>
+                    </div>
+                </div>
+                <div id="pending-transfers-out-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Domain Transfers-Out</h2>
+                    <div id="pending-transfers-out-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading transfer-out requests...</p>
+                    </div>
+                </div>
+                <div id="pending-internal-transfers-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Internal Domain Transfers</h2>
+                    <div id="pending-internal-transfers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading internal transfer requests...</p>
+                    </div>
+                </div>
+                <div id="pending-dns-changes-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending DNS Changes</h2>
+                    <div id="pending-dns-changes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading DNS change requests...</p>
+                    </div>
+                </div>
+                <div id="pending-contact-updates-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Contact Info Updates</h2>
+                    <div id="pending-contact-updates-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading contact update requests...</p>
+                    </div>
+                </div>
+                <div id="pending-payment-proofs-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pending Payment Proofs</h2>
+                    <div id="pending-payment-proofs-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="placeholder-text col-span-full">Loading payment proof submissions...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="all-domains-section" class="content-section hidden">
+                 <h2 class="text-xl font-semibold text-gray-200 mb-4">All Managed Domains</h2>
+                 <form id="domain-filters-form" class="mb-6 p-4 rounded-lg bg-gray-800 border border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label for="domain-search-term" class="form-label text-sm">Search Term</label>
+                            <input type="text" id="domain-search-term" name="search_term" class="input-field text-sm" placeholder="Domain, Client Name/User">
+                        </div>
+                        <div>
+                            <label for="domain-status-filter" class="form-label text-sm">Status</label>
+                            <select id="domain-status-filter" name="status" class="input-field text-sm">
+                                <option value="">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Pending Registration">Pending Registration</option>
+                                <option value="Expiring Soon">Expiring Soon</option>
+                                <option value="Expired">Expired</option>
+                                <option value="Transferred Out">Transferred Out</option>
+                                <option value="Pending Transfer">Pending Transfer</option>
+                                </select>
+                        </div>
+                        <div>
+                            <label for="domain-client-filter" class="form-label text-sm">Client</label>
+                            <select id="domain-client-filter" name="client_id" class="input-field text-sm">
+                                <option value="">All Clients</option>
+                                </select>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="btn btn-primary py-2 px-4 text-sm w-full">
+                                <svg id="filter-icon" class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Filter
+                            </button>
+                            <button type="button" id="clear-domain-filters-button" class="btn btn-secondary py-2 px-4 text-sm w-full">
+                                <svg id="clear-filter-icon" class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                 </form>
+                 <div class="p-4 md:p-6 rounded-xl shadow-lg overflow-x-auto content-panel">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Domain Name</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Client</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Registration Date</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Expiry Date</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Auto-Renew</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-domains-table-body" class="divide-y divide-gray-700">
+                            <tr><td colspan="8" class="text-center p-4 placeholder-text">Loading domains...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="all-clients-section" class="content-section hidden">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-200">Client Management</h2>
+                    <button id="open-create-client-modal-button" class="btn btn-primary">
+                        <svg id="create-client-icon" class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"></svg>
+                        Create New Client
+                    </button>
+                 </div>
+                 <div class="p-4 md:p-6 rounded-xl shadow-lg overflow-x-auto content-panel">
+                     <table class="min-w-full divide-y divide-gray-700">
+                         <thead class="table-header">
+                             <tr>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Client ID</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Username</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Full Name</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Email</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Domains</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                 <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                             </tr>
+                         </thead>
+                         <tbody id="all-clients-table-body" class="divide-y divide-gray-700">
+                             <tr><td colspan="7" class="text-center p-4 placeholder-text">Loading clients...</td></tr>
+                         </tbody>
+                     </table>
+                 </div>
+            </section>
+
+            <section id="admin-billing-section" class="content-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-200">Invoice Management</h2>
+                    <button id="open-create-invoice-modal-button" class="btn btn-primary">
+                        <svg data-lucide="file-plus-2" class="mr-2 h-5 w-5"></svg>
+                        Create New Invoice
+                    </button>
+                </div>
+                <form id="invoice-filters-form" class="mb-6 p-4 rounded-lg bg-gray-800 border border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label for="invoice-search-term" class="form-label text-sm">Search Term</label>
+                            <input type="text" id="invoice-search-term" name="search_term" class="input-field text-sm" placeholder="Invoice #, Desc, Client">
+                        </div>
+                        <div>
+                            <label for="invoice-status-filter" class="form-label text-sm">Status</label>
+                            <select id="invoice-status-filter" name="status" class="input-field text-sm">
+                                <option value="">All Statuses</option>
+                                <option value="Pending Payment">Pending Payment</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="invoice-client-filter" class="form-label text-sm">Client</label>
+                            <select id="invoice-client-filter" name="client_id" class="input-field text-sm">
+                                <option value="">All Clients</option>
+                            </select>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="btn btn-primary py-2 px-4 text-sm w-full">
+                                <svg data-lucide="filter" class="mr-2 h-4 w-4"></svg> Filter
+                            </button>
+                            <button type="button" id="clear-invoice-filters-button" class="btn btn-secondary py-2 px-4 text-sm w-full">
+                                <svg data-lucide="x-circle" class="mr-2 h-4 w-4"></svg> Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="p-4 md:p-6 rounded-xl shadow-lg overflow-x-auto content-panel">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Invoice #</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Client</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Description</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Issue Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Due Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-invoices-table-body" class="divide-y divide-gray-700">
+                            <tr><td colspan="8" class="text-center p-4 placeholder-text">Loading invoices...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="support-tickets-admin-section" class="content-section hidden">
+                 <h2 class="text-xl font-semibold text-gray-200 mb-4">All Support Tickets</h2>
+                 <div id="all-support-tickets-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                     <p class="placeholder-text col-span-full">Loading support tickets...</p>
+                 </div>
+            </section>
+
+            <section id="client-detail-admin-section" class="content-section hidden space-y-6">
+                <button id="back-to-clients-list-button" class="btn btn-secondary mb-4 flex items-center">
+                    <svg id="back-arrow-clients-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Back to Clients List
+                </button>
+                <div class="content-panel p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-1">Client: <span id="client-detail-name" class="text-indigo-400"></span></h2>
+                            <p class="text-sm text-gray-400 mb-1">Username: <span id="client-detail-username" class="font-medium text-gray-300"></span></p>
+                            <p class="text-sm text-gray-400 mb-1">Email: <span id="client-detail-email" class="font-medium text-gray-300"></span></p>
+                            <p class="text-sm text-gray-400">Status: <span id="client-detail-active-status" class="font-semibold"></span></p>
+                        </div>
+                        <div class="flex flex-col space-y-2 items-end">
+                            <button id="open-edit-client-from-detail-button" class="btn btn-secondary btn-sm">
+                                <svg id="edit-client-detail-icon" class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Edit Client
+                            </button>
+                            <button id="toggle-client-active-from-detail-button" class="btn btn-sm">
+                                <svg id="toggle-client-active-detail-icon" class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                <span id="toggle-client-active-detail-text">Toggle Active</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-3 text-purple-400 border-b border-gray-700 pb-2">Owned Domains (<span id="client-detail-domain-count">0</span>)</h3>
+                        <div id="client-detail-domains-table-container" class="max-h-96 overflow-y-auto">
+                            <table id="client-detail-domains-table" class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Domain Name</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Status</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Expires</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700"></tbody>
+                            </table>
+                            <p id="client-detail-domains-placeholder" class="placeholder-text p-3">Loading domains...</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-3 text-purple-400 border-b border-gray-700 pb-2">Recent Requests (<span id="client-detail-request-count">0</span>)</h3>
+                        <div id="client-detail-requests-table-container" class="max-h-96 overflow-y-auto">
+                             <table id="client-detail-requests-table" class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Type</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Domain/Subject</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Date</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700"></tbody>
+                            </table>
+                            <p id="client-detail-requests-placeholder" class="placeholder-text p-3">Loading requests...</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-purple-400 border-b border-gray-700 pb-2">Support Tickets (<span id="client-detail-ticket-count">0</span>)</h3>
+                        <div id="client-detail-tickets-table-container" class="max-h-96 overflow-y-auto">
+                            <table id="client-detail-tickets-table" class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Ticket ID</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Subject</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Date</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Status</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700"></tbody>
+                            </table>
+                            <p id="client-detail-tickets-placeholder" class="placeholder-text p-3">Loading tickets...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="admin-domain-detail-section" class="content-section hidden space-y-6">
+                <button id="back-to-all-domains-button" class="btn btn-secondary mb-4 flex items-center">
+                    <svg id="back-arrow-domains-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Back to All Domains
+                </button>
+                <div class="content-panel p-6">
+                    <h2 class="text-2xl font-semibold mb-1">Domain: <span id="admin-domain-detail-name" class="text-indigo-400"></span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mb-4 text-sm">
+                        <p><strong>Status:</strong> <span id="admin-domain-detail-status" class="status-badge"></span></p>
+                        <p><strong>Owner:</strong> <span id="admin-domain-detail-owner-name"></span> (<span id="admin-domain-detail-owner-username"></span>)</p>
+                        <p><strong>Registered:</strong> <span id="admin-domain-detail-reg-date"></span></p>
+                        <p><strong>Expires:</strong> <span id="admin-domain-detail-exp-date"></span></p>
+                        <p><strong>Auto-Renew:</strong> <span id="admin-domain-detail-auto-renew"></span></p>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-3 text-purple-400 border-b border-gray-700 pb-2">Related Domain Requests (<span id="admin-domain-detail-request-count">0</span>)</h3>
+                        <div id="admin-domain-detail-requests-table-container" class="max-h-80 overflow-y-auto">
+                            <table id="admin-domain-detail-requests-table" class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Req. ID</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Type</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Date</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700"></tbody>
+                            </table>
+                            <p id="admin-domain-detail-requests-placeholder" class="placeholder-text p-3">Loading requests...</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-purple-400 border-b border-gray-700 pb-2">Related Support Tickets (<span id="admin-domain-detail-ticket-count">0</span>)</h3>
+                        <div id="admin-domain-detail-tickets-table-container" class="max-h-80 overflow-y-auto">
+                            <table id="admin-domain-detail-tickets-table" class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Ticket ID</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Subject</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Date</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Status</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700"></tbody>
+                            </table>
+                            <p id="admin-domain-detail-tickets-placeholder" class="placeholder-text p-3">Loading tickets...</p>
+                        </div>
+                    </div>
+                     <div class="mt-6 border-t border-gray-700 pt-4">
+                        <button class="btn btn-primary">Edit Domain Details (Future)</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="admin-notes-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="admin-notes-modal-title" class="text-lg font-semibold">Add Admin Notes</h3>
+                <button id="close-admin-notes-modal" class="text-gray-400 hover:text-gray-200">
+                     <svg id="close-admin-notes-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <form id="admin-notes-form" class="space-y-4">
+                <input type="hidden" id="adminNotesRequestId">
+                <input type="hidden" id="adminNotesRequestType">
+                <input type="hidden" id="adminNotesAction">
+                <div>
+                    <label for="adminNoteText" class="form-label">Notes:</label>
+                    <textarea id="adminNoteText" name="adminNoteText" rows="4" class="input-field" placeholder="Enter optional notes..."></textarea>
+                </div>
+                <div id="epp-code-input-container" class="hidden mt-4">
+                    <label for="adminEppCodeText" class="form-label">EPP Code (if applicable):</label>
+                    <input type="text" id="adminEppCodeText" class="input-field" placeholder="Enter EPP Code">
+                </div>
+                <div class="flex justify-end space-x-3 pt-3">
+                    <button type="button" id="skip-admin-notes-button" class="btn btn-secondary">Process without Notes</button>
+                    <button type="submit" class="btn btn-primary">Save Notes & Process</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-ticket-detail-modal" class="modal-backdrop">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="ticket-detail-modal-title" class="text-xl font-semibold text-indigo-400">Support Ticket Details</h3>
+                <button id="close-ticket-detail-modal" class="text-gray-400 hover:text-gray-200">
+                     <svg id="close-ticket-detail-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <div id="ticket-detail-info" class="mb-4 border-b border-gray-700 pb-4">
+                <p><strong>Ticket ID:</strong> <span id="ticket-detail-id"></span></p>
+                <p><strong>Subject:</strong> <span id="ticket-detail-subject"></span></p>
+                <p><strong>Client:</strong> <span id="ticket-detail-client-name"></span> (<span id="ticket-detail-client-username"></span>)</p>
+                <p><strong>Requested:</strong> <span id="ticket-detail-request-date"></span></p>
+                <p><strong>Status:</strong> <span id="ticket-detail-status-badge" class="status-badge"></span></p>
+                <p><strong>Priority:</strong> <span id="ticket-detail-priority"></span></p>
+                <p class="mt-2"><strong>Initial Message:</strong></p>
+                <p id="ticket-detail-initial-message" class="whitespace-pre-wrap p-2 bg-gray-800 rounded-md text-sm"></p>
+            </div>
+            <h4 class="text-lg font-semibold mb-2 text-purple-400">Conversation History</h4>
+            <div id="ticket-replies-container" class="space-y-3 max-h-60 overflow-y-auto mb-4 p-2 bg-gray-800 rounded-md">
+                <p class="placeholder-text">No replies yet.</p>
+            </div>
+            <form id="admin-ticket-reply-form" class="space-y-3">
+                <input type="hidden" id="adminReplyTicketId">
+                <div>
+                    <label for="adminReplyMessage" class="form-label">Your Reply:</label>
+                    <textarea id="adminReplyMessage" name="adminReplyMessage" rows="3" class="input-field" placeholder="Type your reply..." required></textarea>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <div class="space-x-2">
+                         <button type="button" id="ticket-detail-mark-resolved-button" class="btn btn-sm btn-success">Mark Resolved</button>
+                         <button type="button" id="ticket-detail-close-button" class="btn btn-sm btn-secondary">Close Ticket</button>
+                         <button type="button" id="ticket-detail-reopen-button" class="btn btn-sm btn-warning hidden">Re-Open Ticket</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="create-client-modal" class="modal-backdrop">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Create New Client Account</h3>
+                <button id="close-create-client-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg id="close-create-client-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <form id="create-client-form" class="space-y-4">
+                <div>
+                    <label for="newClientUsername" class="form-label">Username</label>
+                    <input type="text" id="newClientUsername" name="username" class="input-field" required>
+                    <p id="newClientUsernameError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="newClientName" class="form-label">Full Name</label>
+                    <input type="text" id="newClientName" name="name" class="input-field" required>
+                     <p id="newClientNameError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="newClientEmail" class="form-label">Email Address</label>
+                    <input type="email" id="newClientEmail" name="email" class="input-field" required>
+                     <p id="newClientEmailError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="newClientPassword" class="form-label">Password</label>
+                    <input type="password" id="newClientPassword" name="password" class="input-field" required>
+                     <p id="newClientPasswordError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="newClientConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" id="newClientConfirmPassword" name="confirm_password" class="input-field" required>
+                     <p id="newClientConfirmPasswordError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-create-client-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Client</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-client-modal" class="modal-backdrop">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Edit Client Account</h3>
+                <button id="close-edit-client-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg id="close-edit-client-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <form id="edit-client-form" class="space-y-4">
+                <input type="hidden" id="editClientId">
+                <div>
+                    <label for="editClientUsernameDisplay" class="form-label">Username (Cannot be changed)</label>
+                    <input type="text" id="editClientUsernameDisplay" name="username_display" class="input-field bg-gray-600 cursor-not-allowed" readonly>
+                </div>
+                <div>
+                    <label for="editClientName" class="form-label">Full Name</label>
+                    <input type="text" id="editClientName" name="name" class="input-field" required>
+                    <p id="editClientNameError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="editClientEmail" class="form-label">Email Address</label>
+                    <input type="email" id="editClientEmail" name="email" class="input-field" required>
+                    <p id="editClientEmailError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="editClientPassword" class="form-label">New Password (leave blank to keep current)</label>
+                    <input type="password" id="editClientPassword" name="password" class="input-field" placeholder="Enter new password (optional)">
+                    <p id="editClientPasswordError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="editClientConfirmPassword" class="form-label">Confirm New Password</label>
+                    <input type="password" id="editClientConfirmPassword" name="confirm_password" class="input-field" placeholder="Confirm new password">
+                    <p id="editClientConfirmPasswordError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-edit-client-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="reassign-domain-modal" class="modal-backdrop">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Reassign Domain Owner</h3>
+                <button id="close-reassign-domain-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg id="close-reassign-domain-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <form id="reassign-domain-form" class="space-y-4">
+                <input type="hidden" id="reassignDomainId">
+                <div>
+                    <p class="form-label">Domain:</p>
+                    <p id="reassignDomainNameDisplay" class="input-field bg-gray-700 cursor-not-allowed"></p>
+                </div>
+                <div>
+                    <p class="form-label">Current Owner:</p>
+                    <p id="reassignCurrentOwnerDisplay" class="input-field bg-gray-700 cursor-not-allowed"></p>
+                </div>
+                <div>
+                    <label for="reassignNewOwnerSelect" class="form-label">Select New Owner (Client)</label>
+                    <select id="reassignNewOwnerSelect" name="new_user_id" class="input-field" required>
+                        <option value="">-- Select a Client --</option>
+                        </select>
+                    <p id="reassignNewOwnerError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-reassign-domain-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Confirm Reassignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="create-invoice-modal" class="modal-backdrop">
+        <div class="modal-content max-w-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Create New Invoice</h3>
+                <button id="close-create-invoice-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <form id="create-invoice-form" class="space-y-4">
+                <div>
+                    <label for="newInvoiceClient" class="form-label">Client</label>
+                    <select id="newInvoiceClient" name="user_id" class="input-field" required>
+                    </select>
+                    <p id="newInvoiceClientError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="newInvoiceDomain" class="form-label">Related Domain (Optional)</label>
+                    <select id="newInvoiceDomain" name="domain_id" class="input-field">
+                    </select>
+                </div>
+                <div>
+                    <label for="newInvoiceDescription" class="form-label">Description</label>
+                    <input type="text" id="newInvoiceDescription" name="description" class="input-field" placeholder="e.g., Domain Renewal - mydomain.com (1 Year)" required>
+                    <p id="newInvoiceDescriptionError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="newInvoiceAmount" class="form-label">Amount ($)</label>
+                        <input type="number" id="newInvoiceAmount" name="amount" class="input-field" step="0.01" min="0.01" placeholder="15.99" required>
+                        <p id="newInvoiceAmountError" class="error-message mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="newInvoiceStatus" class="form-label">Status</label>
+                        <select id="newInvoiceStatus" name="status" class="input-field" required>
+                            <option value="Pending Payment" selected>Pending Payment</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Overdue">Overdue</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="newInvoiceIssueDate" class="form-label">Issue Date</label>
+                        <input type="date" id="newInvoiceIssueDate" name="issue_date" class="input-field" required>
+                        <p id="newInvoiceIssueDateError" class="error-message mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="newInvoiceDueDate" class="form-label">Due Date</label>
+                        <input type="date" id="newInvoiceDueDate" name="due_date" class="input-field" required>
+                        <p id="newInvoiceDueDateError" class="error-message mt-1 hidden"></p>
+                    </div>
+                </div>
+                <div>
+                    <label for="newInvoiceNotes" class="form-label">Notes (Optional)</label>
+                    <textarea id="newInvoiceNotes" name="notes" rows="3" class="input-field" placeholder="Any internal notes for this invoice..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-create-invoice-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="view-invoice-detail-modal" class="modal-backdrop">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Invoice Details</h3>
+                <button id="close-view-invoice-detail-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <div id="invoice-detail-content" class="space-y-3 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                    <p><strong>Invoice #:</strong> <span id="detail-invoice-number" class="font-medium text-gray-100"></span></p>
+                    <p><strong>Status:</strong> <span id="detail-invoice-status" class="status-badge"></span></p>
+                    <p><strong>Client:</strong> <span id="detail-invoice-client-name" class="font-medium text-gray-100"></span> (<span id="detail-invoice-client-username" class="text-gray-400"></span>)</p>
+                    <p><strong>Amount:</strong> $<span id="detail-invoice-amount" class="font-medium text-gray-100"></span></p>
+                    <p><strong>Issue Date:</strong> <span id="detail-invoice-issue-date" class="font-medium text-gray-100"></span></p>
+                    <p><strong>Due Date:</strong> <span id="detail-invoice-due-date" class="font-medium text-gray-100"></span></p>
+                    <p><strong>Payment Date:</strong> <span id="detail-invoice-payment-date" class="font-medium text-gray-100"></span></p>
+                    <p><strong>Related Domain:</strong> <span id="detail-invoice-domain-name" class="font-medium text-gray-100"></span></p>
+                </div>
+                <div class="pt-2">
+                    <p><strong>Description:</strong></p>
+                    <p id="detail-invoice-description" class="whitespace-pre-wrap p-2 bg-gray-800 rounded-md mt-1 min-h-[40px]"></p>
+                </div>
+                <div class="pt-2">
+                    <strong>Notes:</strong>
+                    <p id="detail-invoice-notes" class="whitespace-pre-wrap p-2 bg-gray-800 rounded-md mt-1 min-h-[40px]"></p>
+                </div>
+            </div>
+            <div class="flex justify-end pt-6">
+                <button type="button" id="ok-view-invoice-detail-button" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="admin-message-box">
+        <p id="admin-message-text"></p>
+        <button id="admin-close-message-box">&times;</button>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="{{ url_for('static', filename='js/admin/admin_main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Management Portal - Client Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client_style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body>
+    <div class="flex h-screen">
+        <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-30 w-64 p-6 space-y-6 transform -translate-x-full md:translate-x-0 md:relative md:flex md:flex-col">
+            <a href="#" class="flex items-center space-x-3 text-2xl font-semibold text-white">
+            <svg class="h-10 w-auto text-white" viewBox="0 0 169.83 211.95" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <path d="M49.47,211.95c37.22-3.11,62.5-21.47,62.12-61.35-.07-19.65-9.74-41.09-28.47-48.12v-.65c16.29-9.44,24.97-24.59,24.71-45.29C107.16,17.8,80.73-.44,40,0h129.82v211.94H49.47Z"/>
+                    <path d="M65.65,148.72c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                    <path d="M65.65,63.78c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                </g>
+            </svg>
+                <span>DomainHub</span>
+            </a>
+            <nav class="space-y-2 flex-1">
+                <a href="#" id="nav-dashboard" class="nav-item active-nav group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <svg id="dashboard-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Dashboard
+                </a>
+                <a href="#" id="nav-domains" class="nav-item group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <svg id="domains-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    My Domains
+                </a>
+                <a href="#" id="nav-profile" class="nav-item group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <svg id="profile-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Profile
+                </a>
+                <a href="#" id="nav-billing" class="nav-item group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <svg id="billing-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Billing
+                </a>
+                <a href="#" id="nav-support" class="nav-item group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <svg id="support-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Support
+                </a>
+            </nav>
+            <div>
+                <a href="#" id="logout-link" class="nav-item group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-red-700 hover:text-white">
+                    <svg id="logout-icon" class="mr-3 h-5 w-5 text-indigo-300 group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"></svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <div id="main-content" class="content flex-1 flex flex-col overflow-hidden">
+            <header class="p-4 flex justify-between items-center">
+                <button id="menu-button" class="md:hidden focus:outline-none">
+                    <svg id="menu-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+                <h1 id="page-title" class="text-xl font-semibold">Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notification-bell-button" class="text-gray-400 hover:text-white focus:outline-none">
+                            <svg id="notification-bell-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                            <span id="notification-count-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
+                        </button>
+                        <div id="notification-dropdown-panel" class="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 hidden">
+                            <div class="p-3 border-b border-gray-700 flex justify-between items-center">
+                                <h3 class="text-sm font-semibold text-gray-200">Notifications</h3>
+                                <button id="mark-all-notifications-read-button" class="text-xs text-indigo-400 hover:text-indigo-300 focus:outline-none">Mark all as read</button>
+                            </div>
+                            <ul id="notification-items-list" class="divide-y divide-gray-700">
+                                <li class="p-3 text-center text-gray-500 text-sm">No new notifications.</li>
+                            </ul>
+                            <div class="p-2 text-center border-t border-gray-700">
+                                <a href="#" id="view-all-notifications-link" class="text-xs text-indigo-400 hover:text-indigo-300">View all (Future)</a>
+                            </div>
+                        </div>
+                    </div>
+                    <span id="welcome-user-text" class="text-sm">Welcome, User!</span>
+                    <img src="https://placehold.co/40x40/374151/E5E7EB?text=U" alt="User Avatar" id="user-avatar-img" class="w-8 h-8 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/E5E7EB?text=U';">
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+                <section id="dashboard-section" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div id="stat-card-total" class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 uppercase">Total Domains</p>
+                                    <p id="total-domains" class="text-3xl font-bold">0</p>
+                                </div>
+                                <div class="p-3 bg-indigo-100 rounded-full">
+                                    <svg id="total-domains-icon" class="h-6 w-6 text-indigo-500" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="stat-card-active" class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 uppercase">Active Domains</p>
+                                    <p id="active-domains" class="text-3xl font-bold text-green-600">0</p>
+                                </div>
+                                <div class="p-3 bg-green-100 rounded-full">
+                                    <svg id="active-domains-icon" class="h-6 w-6 text-green-500" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="stat-card-expiring" class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 uppercase">Expiring Soon</p>
+                                    <p id="expiring-soon" class="text-3xl font-bold text-yellow-600">0</p>
+                                </div>
+                                <div class="p-3 bg-yellow-100 rounded-full">
+                                    <svg id="expiring-soon-icon" class="h-6 w-6 text-yellow-500" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="stat-card-expired" class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 uppercase">Expired Domains</p>
+                                    <p id="expired-domains" class="text-3xl font-bold text-red-600">0</p>
+                                </div>
+                                <div class="p-3 bg-red-100 rounded-full">
+                                     <svg id="expired-domains-icon" class="h-6 w-6 text-red-500" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-panel">
+                        <div class="flex items-center mb-4">
+                             <svg id="alerts-section-icon" class="h-6 w-6 text-yellow-500 mr-3" viewBox="0 0 24 24" fill="currentColor"></svg>
+                            <h2 class="text-lg font-semibold">Important Alerts</h2>
+                        </div>
+                        <div id="alerts-list" class="space-y-2">
+                            <p class="text-sm text-gray-500">No current alerts.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 content-panel">
+                            <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+                            <ul id="recent-activity-list" class="space-y-3">
+                                <li class="text-sm">No recent activity.</li>
+                            </ul>
+                        </div>
+                        <div class="content-panel">
+                            <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                            <div class="space-y-3">
+                                <button id="open-register-domain-modal-button" class="w-full btn btn-primary py-2.5 px-4">
+                                    <svg id="register-domain-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    Register New Domain
+                                </button>
+                                <button id="open-domain-suggestion-tool-button" class="w-full btn btn-teal py-2.5 px-4">
+                                    <svg id="domain-suggestion-icon" data-lucide="lightbulb" class="h-5 w-5 mr-2"></svg>
+                                    Find Available Domains
+                                </button>
+                                <div class="dropdown w-full">
+                                    <button id="domain-transfer-dropdown-button" class="w-full btn btn-purple py-2.5 px-4">
+                                        <svg id="transfer-domain-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                        Domain Transfer Options
+                                        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                    <div id="domain-transfer-dropdown-content" class="dropdown-content">
+                                        <a href="#" id="open-transfer-in-modal-button">Transfer In Domain</a>
+                                        <a href="#" id="open-transfer-out-modal-button">Transfer Out Domain</a>
+                                        <a href="#" id="open-internal-transfer-modal-button">Internal Ownership Transfer</a>
+                                    </div>
+                                </div>
+                                <button id="renew-selected-domains-button" class="w-full btn btn-success py-2.5 px-4">
+                                    <svg id="renew-all-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    Renew Selected Domains
+                                </button>
+                                <button id="open-support-ticket-modal-button" class="w-full btn btn-sky py-2.5 px-4">
+                                    <svg id="open-ticket-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    Open Support Ticket
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="domains-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-semibold">My Domains</h2>
+                        <button id="bulk-renew-action-button" class="btn btn-success hidden py-2 px-4 text-sm">Renew Selected</button>
+                    </div>
+                    <div class="content-panel p-4 md:p-6 overflow-x-auto">
+                        <table class="min-w-full divide-y">
+                            <thead class="table-header">
+                                <tr>
+                                    <th scope="col" class="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider"><input type="checkbox" id="select-all-domains-checkbox" class="form-checkbox h-4 w-4 text-indigo-500 border-gray-600 rounded focus:ring-indigo-400 bg-gray-700"></th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Domain Name</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Registration Date</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Expiry Date</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Auto-Renew</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="domains-table-body" class="divide-y divide-gray-700">
+                                <tr><td colspan="7" class="text-center p-4">Loading domains...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="domain-detail-section" class="hidden space-y-6">
+                    <button id="back-to-domains" class="flex items-center text-indigo-400 hover:text-indigo-300 font-medium">
+                        <svg id="back-arrow-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                        Back to Domains List
+                    </button>
+                    <div class="content-panel p-6">
+                        <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
+                            <h2 class="text-2xl font-semibold">
+                                Manage: <span id="detail-domain-name" class="text-indigo-400"></span>
+                            </h2>
+                            <button id="renew-domain-from-detail-button" class="btn btn-success py-2 px-4 flex items-center text-sm">
+                                <svg id="renew-domain-detail-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Renew This Domain
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div><p class="text-sm text-gray-400">Registered on:</p><p id="detail-reg-date" class="font-medium"></p></div>
+                            <div><p class="text-sm text-gray-400">Expires on:</p><p id="detail-exp-date" class="font-medium"></p></div>
+                            <div><p class="text-sm text-gray-400">Auto-Renew:</p><p id="detail-auto-renew-status" class="font-semibold"></p></div>
+                            <div><p class="text-sm text-gray-400">Domain Status:</p><p id="detail-domain-status" class="font-semibold"></p></div>
+                            <div><p class="text-sm text-gray-400">Domain Lock:</p><p id="detail-domain-lock-status" class="font-semibold">Unknown</p></div>
+                        </div>
+
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-xl font-semibold text-purple-400 border-b border-gray-700 pb-2 flex-grow">
+                                    Current DNS Records
+                                    <span id="detail-dns-request-status" class="text-sm text-yellow-400 ml-2 hidden">(DNS Change Request Pending)</span>
+                                </h3>
+                                <button id="open-add-dns-record-modal-button" class="btn btn-sm btn-sky flex items-center">
+                                    <svg data-lucide="plus-circle" class="mr-2 h-4 w-4"></svg>
+                                    Add Record
+                                </button>
+                            </div>
+                            <div id="dns-records-table-container" class="max-h-96 overflow-y-auto bg-gray-800 rounded-lg p-4">
+                                <table id="dns-records-table" class="min-w-full text-sm">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th class="text-left pb-2 px-3">Type</th>
+                                            <th class="text-left pb-2 px-3">Host/Name</th>
+                                            <th class="text-left pb-2 px-3">Value/Target</th>
+                                            <th class="text-left pb-2 px-3">TTL</th>
+                                            <th class="text-left pb-2 px-3">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dns-records-list-body">
+                                        <tr data-record-id="static-1" data-record-type="A" data-record-host="@" data-record-value="192.0.2.1" data-record-ttl="3600">
+                                            <td class="px-3 py-2">A</td>
+                                            <td class="px-3 py-2">@</td>
+                                            <td class="px-3 py-2">192.0.2.1</td>
+                                            <td class="px-3 py-2">3600</td>
+                                            <td class="px-3 py-2 space-x-1">
+                                                <button class="btn btn-xs btn-secondary edit-dns-record-button">
+                                                    <svg data-lucide="file-pen-line" class="inline h-3 w-3 mr-1"></svg>Edit
+                                                </button>
+                                                <button class="btn btn-xs btn-danger delete-dns-record-button">
+                                                    <svg data-lucide="trash-2" class="inline h-3 w-3 mr-1"></svg>Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p id="dns-records-placeholder" class="placeholder-text p-3 hidden">No DNS records found. Click "Add Record" to create one.</p>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Note: DNS changes may take some time to propagate globally.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                             <div class="space-y-3">
+                                <h3 class="text-lg font-semibold mb-2 border-b border-gray-700 pb-1 text-purple-400">Management Actions</h3>
+                                <button id="request-dns-changes-button" class="w-full btn btn-primary py-2.5 px-4 text-sm">
+                                    <svg id="dns-request-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    Request DNS Assistance (Old)
+                                </button>
+                                <button id="request-contact-info-update-button" class="w-full btn btn-primary py-2.5 px-4 text-sm">
+                                    <svg id="contact-update-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    Request Contact Info Update
+                                </button>
+                                <button id="request-domain-lock-button" class="w-full btn btn-secondary py-2.5 px-4 text-sm">
+                                    <svg id="domain-lock-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                    <span id="toggle-lock-button-text">Toggle Domain Lock</span>
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <h3 class="text-lg font-semibold mb-2 border-b border-gray-700 pb-1 text-red-400">Danger Zone</h3>
+                                <button id="request-transfer-out-detail-button" class="w-full btn btn-danger py-2.5 px-4">Request Transfer Out</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="profile-section" class="hidden space-y-6">
+                    <h2 class="text-2xl font-semibold">User Profile</h2>
+                    <div class="content-panel p-6">
+                        <div id="profile-view-mode">
+                            <div class="mb-4"><label class="form-label text-gray-400">Username</label><p id="profile-username" class="mt-1 text-lg"></p></div>
+                            <div class="mb-4"><label class="form-label text-gray-400">Full Name</label><p id="profile-name" class="mt-1 text-lg"></p></div>
+                            <div class="mb-6"><label class="form-label text-gray-400">Email Address</label><p id="profile-email" class="mt-1 text-lg"></p></div>
+                            <button id="edit-profile-button" class="btn btn-primary">Edit Profile</button>
+                        </div>
+                        <form id="profile-edit-form" class="hidden space-y-6">
+                            <div><label for="profileEditUsername" class="form-label">Username</label><input type="text" id="profileEditUsername" name="username" class="input-field bg-gray-600 cursor-not-allowed" readonly></div>
+                            <div><label for="profileEditName" class="form-label">Full Name</label><input type="text" id="profileEditName" name="name" class="input-field" required><span id="profileEditNameError" class="error-message-text hidden"></span></div>
+                            <div><label for="profileEditEmail" class="form-label">Email Address</label><input type="email" id="profileEditEmail" name="email" class="input-field" required><span id="profileEditEmailError" class="error-message-text hidden"></span></div>
+                            <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-edit-profile-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="billing-section" class="hidden space-y-6">
+                     <h2 class="text-2xl font-semibold">Billing & Invoices</h2>
+                    <div class="content-panel p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Your Invoices</h3>
+                            <button id="add-payment-method-button" class="btn btn-primary text-sm flex items-center">
+                                <svg id="add-payment-icon" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Add Payment Method (Future)
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Invoice #</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Issue Date</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Due Date</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Description</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Amount</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Status</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-history-table-body" class="divide-y divide-gray-700">
+                                    <tr><td colspan="7" class="text-center p-4 text-gray-400">Loading invoices...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-6 p-4 bg-gray-800 rounded-lg">
+                            <h4 class="font-semibold text-md mb-2 text-purple-400">Payment Instructions</h4>
+                            <p class="text-sm text-gray-300">
+                                Please make payments to the following account and use your Invoice Number as the reference:
+                            </p>
+                            <ul class="list-disc list-inside mt-2 text-sm text-gray-300">
+                                <li>Bank Name: Example Bank PLC</li>
+                                <li>Account Name: DomainHub Services</li>
+                                <li>Account Number: 1234567890</li>
+                                <li>Sort Code: 00-11-22</li>
+                                <li>IBAN: GB00EXAB12345678901234</li>
+                            </ul>
+                            <p class="text-sm text-gray-300 mt-3">
+                                After making a payment, please click "Mark as Paid" next to the relevant invoice and provide your transaction reference.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="support-section" class="hidden space-y-6">
+                    <h2 class="text-2xl font-semibold">Support Center</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="content-panel p-6">
+                            <h3 class="text-lg font-semibold mb-3">Contact Support</h3>
+                            <p class="text-sm mb-4">Have questions or need assistance? Our support team is here to help.</p>
+                            <button id="open-new-support-ticket-modal-button" class="w-full btn btn-primary py-2.5 px-4">
+                                <svg id="create-ticket-icon" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor"></svg>
+                                Create New Support Ticket
+                            </button>
+                        </div>
+                        <div class="content-panel p-6">
+                            <h3 class="text-lg font-semibold mb-3">Knowledge Base</h3>
+                            <p class="text-sm mb-4">Find answers to common questions in our FAQ and guides.</p>
+                            <input type="search" placeholder="Search knowledge base..." class="input-field mb-3">
+                            <a href="#" class="text-indigo-400 hover:text-indigo-300 font-medium">Browse Articles</a>
+                        </div>
+                    </div>
+                     <div class="content-panel p-6 mt-6">
+                        <h3 class="text-lg font-semibold mb-4">Your Tickets</h3>
+                        <div id="existing-tickets-list" class="space-y-3">
+                            <p class="text-sm text-gray-500">You currently have no support tickets.</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="domain-suggestion-tool-modal" class="modal-backdrop">
+        <div class="modal-content max-w-2xl"> <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Domain Suggestion Tool</h3>
+                <button id="close-domain-suggestion-tool-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <form id="domain-suggestion-form" class="space-y-4">
+                <div>
+                    <label for="domainKeywords" class="form-label">Enter Keywords or Domain Prefix:</label>
+                    <input type="text" id="domainKeywords" name="domainKeywords" class="input-field" placeholder="e.g., mycoolbusiness, bestwidgets" required>
+                    <p id="domainKeywordsError" class="error-message-text hidden"></p>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button type="submit" class="btn btn-teal flex items-center">
+                        <svg data-lucide="search" class="h-5 w-5 mr-2"></svg>
+                        Search for Domains
+                    </button>
+                </div>
+            </form>
+            <div id="domain-suggestions-results-container" class="mt-6">
+                <h4 class="text-lg font-semibold mb-3 text-purple-400">Suggestions:</h4>
+                <div id="domain-suggestions-list" class="space-y-2 max-h-72 overflow-y-auto p-3 bg-gray-800 rounded-md">
+                    <p class="text-sm text-gray-500">Enter keywords to see suggestions.</p>
+                    </div>
+                <div id="domain-suggestion-loading" class="text-center py-4 hidden">
+                    <svg data-lucide="loader-2" class="animate-spin h-8 w-8 text-indigo-400 mx-auto"></svg>
+                    <p class="text-sm text-gray-400 mt-2">Searching for domains...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="register-domain-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4"> <h3 id="register-domain-modal-title" class="text-xl font-semibold">Request New Domain Registration</h3>
+                <button id="close-register-domain-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg id="close-register-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <div id="suggested-domain-info" class="mb-3 p-2 text-sm bg-indigo-800 text-indigo-100 rounded-md hidden"></div>
+            
+            <form id="register-domain-form" class="space-y-4">
+                <div><label for="requestedDomainName" class="form-label">Domain Name (e.g., mywebsite)</label><input type="text" id="requestedDomainName" name="requestedDomainName" class="input-field" placeholder="myawesomewebsite" required><span id="requestedDomainNameError" class="error-message-text hidden"></span></div>
+                <div><label for="requestedTld" class="form-label">TLD (e.g., .com, .net)</label><input type="text" id="requestedTld" name="requestedTld" class="input-field" placeholder=".com" required><span id="requestedTldError" class="error-message-text hidden"></span></div>
+                <div><label for="registrationDurationYears" class="form-label">Registration Duration</label><select id="registrationDurationYears" name="registrationDurationYears" class="input-field" required><option value="1">1 Year</option><option value="2">2 Years</option><option value="3">3 Years</option><option value="5">5 Years</option><option value="10">10 Years</option></select></div>
+                <div class="flex items-center pt-2"><input id="requestSsl" name="requestSsl" type="checkbox" class="h-4 w-4 text-indigo-500 border-gray-500 rounded focus:ring-indigo-400"><label for="requestSsl" class="ml-2 block text-sm">Include SSL Certificate?</label></div>
+                <div id="ssl-duration-container" class="hidden"> <label for="sslDurationYears" class="form-label">SSL Duration</label><select id="sslDurationYears" name="sslDurationYears" class="input-field"><option value="1">1 Year</option><option value="2">2 Years</option><option value="3">3 Years</option></select></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-register-domain-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-primary">Submit Request</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="renew-domain-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Request Domain Renewal</h3><button id="close-renew-domain-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-renew-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="renew-domain-form" class="space-y-4">
+                <input type="hidden" id="renewalDomainId" name="renewalDomainId">
+                <div><p class="form-label">Domain to Renew:</p><p id="renewalDomainNameDisplay" class="input-field bg-gray-700"></p></div>
+                <div><label for="renewalDurationYears" class="form-label">Renewal Duration</label><select id="renewalDurationYears" name="renewalDurationYears" class="input-field" required><option value="1">1 Year</option><option value="2">2 Years</option><option value="3">3 Years</option><option value="5">5 Years</option></select></div>
+                <div class="flex items-center pt-2"><input id="renewalRequestSsl" name="renewalRequestSsl" type="checkbox" class="h-4 w-4 text-indigo-500 border-gray-500 rounded focus:ring-indigo-400"><label for="renewalRequestSsl" class="ml-2 block text-sm">Include SSL Certificate with Renewal?</label></div>
+                <div id="renewal-ssl-duration-container" class="hidden"><label for="renewalSslDurationYears" class="form-label">SSL Duration</label><select id="renewalSslDurationYears" name="renewalSslDurationYears" class="input-field"><option value="1">1 Year</option><option value="2">2 Years</option><option value="3">3 Years</option></select></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-renew-domain-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-success">Submit Renewal Request</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="support-ticket-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Create Support Ticket</h3><button id="close-support-ticket-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-ticket-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="support-ticket-form" class="space-y-4">
+                <div><label for="ticketSubject" class="form-label">Subject</label><input type="text" id="ticketSubject" name="ticketSubject" class="input-field" placeholder="e.g., DNS Update for mydomain.com" required></div>
+                <div><label for="ticketMessage" class="form-label">Message</label><textarea id="ticketMessage" name="ticketMessage" rows="4" class="input-field" placeholder="Please describe your issue or request..." required></textarea></div>
+                 <div><label for="ticketRelatedDomain" class="form-label">Related Domain (Optional)</label><select id="ticketRelatedDomain" name="ticketRelatedDomain" class="input-field"><option value="">-- Select Domain if Applicable --</option></select></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-support-ticket-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-sky">Submit Ticket</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="client-ticket-detail-modal" class="modal-backdrop">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="client-ticket-detail-modal-title" class="text-xl font-semibold text-indigo-400">Support Ticket</h3>
+                <button id="close-client-ticket-detail-modal" class="text-gray-400 hover:text-gray-200">
+                     <svg id="close-client-ticket-detail-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
+                </button>
+            </div>
+            <div id="client-ticket-detail-info" class="mb-4 border-b border-gray-700 pb-4">
+                <p><strong>Ticket ID:</strong> <span id="client-ticket-id-display"></span></p>
+                <p><strong>Subject:</strong> <span id="client-ticket-subject-display"></span></p>
+                <p><strong>Status:</strong> <span id="client-ticket-status-badge" class="status-badge"></span></p>
+                <p><strong>Requested:</strong> <span id="client-ticket-request-date-display"></span></p>
+                <p class="mt-2"><strong>Initial Message:</strong></p>
+                <p id="client-ticket-initial-message-display" class="whitespace-pre-wrap p-2 bg-gray-800 rounded-md text-sm"></p>
+            </div>
+            <h4 class="text-lg font-semibold mb-2 text-purple-400">Conversation</h4>
+            <div id="client-ticket-replies-container" class="space-y-3 max-h-60 overflow-y-auto mb-4 p-2 bg-gray-800 rounded-md">
+                <p class="placeholder-text">No replies yet.</p>
+            </div>
+            <form id="client-ticket-reply-form" class="space-y-3">
+                <input type="hidden" id="clientReplyTicketId">
+                <div>
+                    <label for="clientReplyMessage" class="form-label">Your Reply:</label>
+                    <textarea id="clientReplyMessage" name="clientReplyMessage" rows="3" class="input-field" placeholder="Type your reply..." required></textarea>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="transfer-in-domain-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Request Domain Transfer-In</h3><button id="close-transfer-in-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-transfer-in-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="transfer-in-domain-form" class="space-y-4">
+                <p class="text-sm text-gray-400">To transfer your domain to our management, please ensure it's unlocked at your current registrar and obtain the EPP/Authorization code.</p>
+                <div><label for="transferInDomainName" class="form-label">Domain Name to Transfer (e.g., mydomain.com)</label><input type="text" id="transferInDomainName" name="transferInDomainName" class="input-field" placeholder="example.com" required><span id="transferInDomainNameError" class="error-message-text hidden"></span></div>
+                <div><label for="transferInAuthCode" class="form-label">Authorization Code (EPP Code) <span class="text-xs text-gray-500">(Optional)</span></label><input type="text" id="transferInAuthCode" name="transferInAuthCode" class="input-field" placeholder="Enter EPP code if you have it"><p class="text-xs text-gray-500 mt-1">If you don't have this, we can assist you after you submit the request.</p></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-transfer-in-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-purple">Submit Transfer-In Request</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="transfer-out-domain-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Request Domain Transfer-Out</h3><button id="close-transfer-out-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-transfer-out-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="transfer-out-domain-form" class="space-y-4">
+                <p class="text-sm text-gray-400">Request to transfer a domain you own with us to another registrar or account.</p>
+                <div><label for="transferOutDomainSelect" class="form-label">Select Domain to Transfer Out</label><select id="transferOutDomainSelect" name="transferOutDomainSelect" class="input-field" required><option value="">-- Select Your Domain --</option></select></div>
+                <div><label for="transferOutDestinationInfo" class="form-label">Destination Contact/Account Info <span class="text-xs text-gray-500">(Optional)</span></label><textarea id="transferOutDestinationInfo" name="transferOutDestinationInfo" rows="3" class="input-field" placeholder="e.g., New registrar account details, contact person"></textarea></div>
+                 <div><label for="transferOutReason" class="form-label">Reason for Transfer <span class="text-xs text-gray-500">(Optional)</span></label><textarea id="transferOutReason" name="transferOutReason" rows="2" class="input-field" placeholder="Reason for transferring out"></textarea></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-transfer-out-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-danger">Submit Transfer-Out Request</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="internal-transfer-domain-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Request Internal Ownership Transfer</h3><button id="close-internal-transfer-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-internal-transfer-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="internal-transfer-domain-form" class="space-y-4">
+                 <p class="text-sm text-gray-400">Request to transfer ownership of one of your domains to another client within our platform.</p>
+                <div>
+                    <label for="internalTransferDomainSelect" class="form-label">Select Domain to Transfer</label>
+                    <select id="internalTransferDomainSelect" name="domainId" class="input-field" required></select>
+                    <p id="internalTransferDomainSelectError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="internalTransferToClientIdentifier" class="form-label">Target Client's Username or Email</label>
+                    <input type="text" id="internalTransferToClientIdentifier" name="targetClientIdentifier" class="input-field" placeholder="Enter username or email of the new owner" required>
+                    <p id="internalTransferToClientIdentifierError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-internal-transfer-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-teal">Submit Internal Transfer Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-dns-record-modal" class="modal-backdrop">
+        <div class="modal-content max-w-lg"> <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Request DNS Record Addition</h3>
+                <button id="close-add-dns-record-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <form id="add-dns-record-form" class="space-y-4">
+                <input type="hidden" id="addDnsRecordDomainId" name="domainId">
+                <div>
+                    <p class="form-label">Domain:</p>
+                    <p id="addDnsRecordDomainNameDisplay" class="input-field bg-gray-700 cursor-default"></p>
+                </div>
+                <div>
+                    <label for="dnsRecordType" class="form-label">Record Type</label>
+                    <select id="dnsRecordType" name="recordType" class="input-field" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="A">A (Address Record)</option>
+                        <option value="AAAA">AAAA (IPv6 Address Record)</option>
+                        <option value="CNAME">CNAME (Canonical Name Record)</option>
+                        <option value="MX">MX (Mail Exchange Record)</option>
+                        <option value="TXT">TXT (Text Record)</option>
+                        <option value="SRV">SRV (Service Record)</option>
+                        <option value="CAA">CAA (Certification Authority Authorization)</option>
+                        </select>
+                    <p id="dnsRecordTypeError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="dnsRecordHost" class="form-label">Host/Name</label>
+                    <input type="text" id="dnsRecordHost" name="recordHost" class="input-field" placeholder="@, www, mail, subdomains..." required>
+                    <p id="dnsRecordHostError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="dnsRecordValue" class="form-label">Value/Target/Points to</label>
+                    <input type="text" id="dnsRecordValue" name="recordValue" class="input-field" placeholder="IP Address or Hostname" required>
+                    <p id="dnsRecordValueError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="dnsRecordTTL" class="form-label">TTL (Time To Live)</label>
+                        <input type="number" id="dnsRecordTTL" name="recordTTL" class="input-field" placeholder="3600" value="3600" min="60">
+                    </div>
+                    <div id="dnsRecordPriorityContainer" class="hidden"> <label for="dnsRecordPriority" class="form-label">Priority (for MX/SRV)</label>
+                        <input type="number" id="dnsRecordPriority" name="recordPriority" class="input-field" placeholder="10" min="0">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-add-dns-record-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-cyan">Submit Add Record Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-dns-record-modal" class="modal-backdrop">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-indigo-400">Request DNS Record Edit</h3>
+                <button id="close-edit-dns-record-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <form id="edit-dns-record-form" class="space-y-4">
+                <input type="hidden" id="editDnsRecordDomainId" name="domainId">
+                <input type="hidden" id="editDnsRecordOriginalId" name="originalRecordId"> <div>
+                    <p class="form-label">Domain:</p>
+                    <p id="editDnsRecordDomainNameDisplay" class="input-field bg-gray-700 cursor-default"></p>
+                </div>
+                <div>
+                    <label for="editDnsRecordType" class="form-label">Record Type</label>
+                    <select id="editDnsRecordType" name="recordType" class="input-field" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="A">A (Address Record)</option>
+                        <option value="AAAA">AAAA (IPv6 Address Record)</option>
+                        <option value="CNAME">CNAME (Canonical Name Record)</option>
+                        <option value="MX">MX (Mail Exchange Record)</option>
+                        <option value="TXT">TXT (Text Record)</option>
+                        <option value="SRV">SRV (Service Record)</option>
+                        <option value="CAA">CAA (Certification Authority Authorization)</option>
+                    </select>
+                    <p id="editDnsRecordTypeError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="editDnsRecordHost" class="form-label">Host/Name</label>
+                    <input type="text" id="editDnsRecordHost" name="recordHost" class="input-field" placeholder="@, www, mail, subdomains..." required>
+                    <p id="editDnsRecordHostError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="editDnsRecordValue" class="form-label">Value/Target/Points to</label>
+                    <input type="text" id="editDnsRecordValue" name="recordValue" class="input-field" placeholder="IP Address or Hostname" required>
+                    <p id="editDnsRecordValueError" class="error-message mt-1 hidden"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="editDnsRecordTTL" class="form-label">TTL (Time To Live)</label>
+                        <input type="number" id="editDnsRecordTTL" name="recordTTL" class="input-field" placeholder="3600" value="3600" min="60">
+                    </div>
+                    <div id="editDnsRecordPriorityContainer" class="hidden">
+                        <label for="editDnsRecordPriority" class="form-label">Priority (for MX/SRV)</label>
+                        <input type="number" id="editDnsRecordPriority" name="recordPriority" class="input-field" placeholder="10" min="0">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-edit-dns-record-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-cyan">Submit Edit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-delete-dns-record-modal" class="modal-backdrop">
+        <div class="modal-content max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-red-500">Confirm DNS Record Deletion</h3>
+                <button id="close-confirm-delete-dns-record-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <input type="hidden" id="deleteDnsRecordDomainId">
+            <input type="hidden" id="deleteDnsRecordIdentifier"> <p class="mb-2">Are you sure you want to request deletion of the following DNS record?</p>
+            <div id="delete-dns-record-summary" class="p-3 bg-gray-800 rounded-md text-sm mb-6">
+                </div>
+            <p class="text-xs text-gray-400 mb-4">This will submit a request to our administrators. The record will not be deleted immediately.</p>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="cancel-delete-dns-record-button" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirm-delete-dns-record-submit-button" class="btn btn-danger">Request Deletion</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-update-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-semibold">Request Contact Info Update</h3><button id="close-contact-update-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-contact-update-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <form id="contact-update-form" class="space-y-4">
+                <input type="hidden" id="contactUpdateDomainId" name="contactUpdateDomainId">
+                <div><p class="form-label">Domain:</p><p id="contactUpdateDomainNameDisplay" class="input-field bg-gray-700"></p></div>
+                <div><label for="contactUpdateDescription" class="form-label">Describe Required Contact Changes</label><textarea id="contactUpdateDescription" name="contactUpdateDescription" rows="5" class="input-field" placeholder="e.g., Update Registrant Email to new@example.com, Change Admin Phone to 555-1234." required></textarea><p class="text-xs text-gray-500 mt-1">Please specify which contact type (Registrant, Admin, Tech, Billing) and the new information.</p></div>
+                <div class="flex justify-end space-x-3 pt-4"><button type="button" id="cancel-contact-update-button" class="btn btn-secondary">Cancel</button><button type="submit" class="btn btn-orange">Submit Contact Update Request</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="not-implemented-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6"><h3 id="not-implemented-modal-title" class="text-xl font-semibold">Feature Not Available</h3><button id="close-not-implemented-modal" class="text-gray-400 hover:text-gray-200"><svg id="close-not-implemented-modal-icon" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg></button></div>
+            <p id="not-implemented-modal-message">This feature is currently under development. Please check back later.</p>
+            <div class="flex justify-end pt-4"><button type="button" id="ok-not-implemented-button" class="btn btn-primary">OK</button></div>
+        </div>
+    </div>
+
+    <div id="payment-proof-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold">Submit Payment Proof</h3>
+                <button id="close-payment-proof-modal" class="text-gray-400 hover:text-gray-200">
+                    <svg data-lucide="x" class="h-6 w-6"></svg>
+                </button>
+            </div>
+            <form id="payment-proof-form" class="space-y-4">
+                <input type="hidden" id="paymentProofInvoiceId">
+                <div>
+                    <p class="form-label">Invoice Number:</p>
+                    <p id="paymentProofInvoiceNumberDisplay" class="input-field bg-gray-700"></p>
+                </div>
+                <div>
+                    <p class="form-label">Amount Due:</p>
+                    <p id="paymentProofAmountDisplay" class="input-field bg-gray-700"></p>
+                </div>
+                <div>
+                    <label for="paymentNotes" class="form-label">Payment Notes (e.g., Transaction ID, Date)</label>
+                    <textarea id="paymentNotes" name="paymentNotes" rows="3" class="input-field" placeholder="Enter transaction ID, payment date, or other relevant notes..." required></textarea>
+                    <p id="paymentNotesError" class="error-message-text hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-payment-proof-button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-success">Submit Proof</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="message-box" class="fixed bottom-5 right-5 p-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 max-w-sm z-50" style="visibility: hidden;">
+        <p id="message-text"></p>
+        <button id="close-message-box" class="absolute top-2 right-2 hover:text-gray-300 text-xl leading-none">&times;</button>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="{{ url_for('static', filename='js/client/client_main.js') }}"></script>
+</body>
+</html>

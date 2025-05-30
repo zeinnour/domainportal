@@ -1,0 +1,15 @@
+# Environment variables
+.env
+
+# Python virtual environment
+venv/
+*.pyc
+__pycache__/
+
+# SQLite database file (if you don't want to commit data)
+# domain_portal.db
+
+# Other common Python ignores
+*.log
+*.pot
+*.mo
