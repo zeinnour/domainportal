@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { background-color: #f59e0b; /* Orange for warning/reminder */ color: #ffffff; padding: 10px 20px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center; }
+        .content { padding: 20px; line-height: 1.6; }
+        .footer { text-align: center; padding: 15px; font-size: 0.9em; color: #777; }
+        .button { display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #8b5cf6; color: #ffffff; text-decoration: none; border-radius: 5px; }
+        .highlight { color: #c026d3; font-weight: bold; } /* Purple for domain name */
+        strong { color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Domain Expiry Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ client_name }},</p>
+            <p>This is a friendly reminder that your domain <span class="highlight">{{ domain_name }}</span> is due to expire in <strong>{{ days_remaining }} day(s)</strong>, on {{ expiry_date_str }}.</p>
+            <p>To avoid any interruption to your services, please ensure your domain is renewed before the expiry date. You can renew your domain through your client portal.</p>
+            <p style="text-align:center;">
+                <a href="{{ portal_url }}" class="button">Renew Domain Now</a>
+            </p>
+            <p>If you have already renewed this domain, or if auto-renewal is enabled, please disregard this notice.</p>
+            <p>If you have any questions, please contact our support team.</p>
+            <p>Thank you,<br>The DomainHub Team</p>
+        </div>
+        <div class="footer">
+            &copy; {{ current_year }} DomainHub. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

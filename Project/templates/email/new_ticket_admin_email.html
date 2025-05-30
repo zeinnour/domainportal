@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { background-color: #f59e0b; /* Orange for admin alert */ color: #ffffff; padding: 10px 20px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center; }
+        .content { padding: 20px; line-height: 1.6; }
+        .footer { text-align: center; padding: 15px; font-size: 0.9em; color: #777; }
+        .button { display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #8b5cf6; color: #ffffff; text-decoration: none; border-radius: 5px; }
+        .ticket-message { background-color: #f9f9f9; border-left: 3px solid #f59e0b; padding: 10px; margin-top: 10px; white-space: pre-wrap; }
+        strong { color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Support Ticket Submitted</h1>
+        </div>
+        <div class="content">
+            <p>Hello Admin,</p>
+            <p>A new support ticket (#{{ ticket_id }}) has been submitted by client <strong>{{ client_name }}</strong> (Username: {{ client_username }}).</p>
+            <p><strong>Subject:</strong> {{ ticket_subject }}</p>
+            {% if related_domain_name %}
+            <p><strong>Related Domain:</strong> {{ related_domain_name }}</p>
+            {% endif %}
+            <p><strong>Initial Message:</strong></p>
+            <div class="ticket-message">
+                {{ ticket_message|safe }}
+            </div>
+            <p>Please log in to the admin panel to view and respond to this ticket.</p>
+            <p style="text-align:center;">
+                <a href="{{ portal_url }}" class="button">Go to Admin Panel</a>
+            </p>
+        </div>
+        <div class="footer">
+            &copy; {{ current_year }} DomainHub.
+        </div>
+    </div>
+</body>
+</html>

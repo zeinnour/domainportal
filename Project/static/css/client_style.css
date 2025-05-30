@@ -1,0 +1,345 @@
+/* Client Panel Specific Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #111827; /* Dark background */
+    color: #D1D5DB; /* Light gray text */
+}
+.sidebar {
+    transition: transform 0.3s ease-in-out;
+    background-color: #1F2937; /* Slightly lighter dark for sidebar */
+    color: #E5E7EB;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #374151; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #6B7280; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+.active-nav { background-color: #4F46E5; color: white; } /* Indigo-600 */
+.active-nav svg { color: white; }
+.nav-item:hover { background-color: #374151; } /* Gray-700 */
+
+.content-panel, .stat-card {
+    background-color: #1F2937; /* Gray-800 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid #374151; /* Gray-700 */
+    padding: 1.5rem; /* p-6 */
+}
+.stat-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+.stat-card p.text-gray-500 { color: #9CA3AF; }
+.stat-card p.text-gray-800, .stat-card p.text-green-600, .stat-card p.text-yellow-600, .stat-card p.text-red-600 {
+    color: #F3F4F6;
+}
+.table-header th {
+    background-color: #374151;
+    color: #D1D5DB;
+    border-bottom: 1px solid #4B5563; /* Gray-600 */
+}
+tbody tr { border-bottom: 1px solid #374151; }
+tbody tr:hover { background-color: #2d3748; } /* Slightly darker than sidebar for hover */
+
+/* DNS Table Specific Styles */
+#dns-records-table th, #dns-records-table td {
+    padding: 0.75rem; /* p-3 */
+    text-align: left;
+    font-size: 0.875rem; /* text-sm */
+}
+#dns-records-table th {
+    color: #D1D5DB; /* Lighter text for table headers */
+    background-color: #374151; /* Darker background for DNS table header */
+}
+#dns-records-table td {
+    color: #E5E7EB; /* Slightly lighter text for table data */
+    border-bottom: 1px solid #4B5563;
+}
+#dns-records-table tr:last-child td {
+    border-bottom: none;
+}
+
+.modal-backdrop {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 50; opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+.modal-backdrop.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background-color: #1F2937;
+    color: #D1D5DB; padding: 2rem; border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    width: 90%; max-width: 600px;
+    transform: scale(0.95); transition: transform 0.3s ease-in-out;
+    border: 1px solid #4B5563;
+}
+.modal-backdrop.active .modal-content { transform: scale(1); }
+
+.input-field, textarea.input-field, select.input-field {
+    margin-top: 0.25rem; display: block; width: 100%;
+    padding-left: 0.75rem; padding-right: 0.75rem;
+    padding-top: 0.5rem; padding-bottom: 0.5rem;
+    background-color: #374151; border: 1px solid #4B5563;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem; line-height: 1.25rem; color: #F3F4F6;
+}
+textarea.input-field { min-height: 100px; }
+.input-field::placeholder { color: #9CA3AF; }
+.input-field:focus, textarea.input-field:focus, select.input-field:focus {
+    outline: 2px solid transparent; outline-offset: 2px;
+    --tw-ring-color: #4F46E5;
+    box-shadow: 0 0 0 2px #1F2937, 0 0 0 4px var(--tw-ring-color), 0 1px 2px 0 rgba(0,0,0,0.1);
+    border-color: #4F46E5;
+}
+.form-label {
+    display: block; font-size: 0.875rem; line-height: 1.25rem;
+    font-weight: 500; color: #D1D5DB; margin-bottom: 0.25rem;
+}
+.auto-renew-label.pending-request { opacity: 0.6; cursor: not-allowed; }
+.auto-renew-label.pending-request input[type="checkbox"] { pointer-events: none; }
+.request-status-text { font-size: 0.75rem; color: #9CA3AF; margin-left: 0.5rem; }
+.input-field.error { border-color: #F87171; --tw-ring-color: #F87171; }
+.input-field.error:focus {
+     box-shadow: 0 0 0 2px #1F2937, 0 0 0 4px var(--tw-ring-color), 0 1px 2px 0 rgba(0,0,0,0.1);
+     border-color: #F87171;
+}
+.error-message-text { color: #F87171; font-size: 0.75rem; margin-top: 0.25rem; }
+.shake-animation { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+.ticket-card {
+    background-color: #374151; padding: 1rem; border-radius: 0.5rem;
+    border: 1px solid #4B5563; margin-bottom: 0.75rem; color: #D1D5DB;
+    cursor: pointer; transition: background-color 0.2s ease-in-out;
+}
+.ticket-card:hover { background-color: #4B5563; }
+.ticket-subject { font-weight: 600; color: #F3F4F6; display: block; margin-bottom: 0.25rem; }
+.ticket-details { font-size: 0.75rem; color: #9CA3AF; margin-bottom: 0.5rem; }
+.ticket-message-preview { font-size: 0.875rem; color: #D1D5DB; white-space: pre-wrap; word-break: break-word; }
+.status-badge {
+    padding-left: 0.5rem; padding-right: 0.5rem; padding-top: 0.125rem; padding-bottom: 0.125rem;
+    font-size: 0.75rem; font-weight: 500; border-radius: 9999px; display: inline-block;
+}
+.status-open { background-color: #3B82F6; color: #EFF6FF; }
+.status-in-progress { background-color: #F59E0B; color: #FFFBEB; }
+.status-resolved { background-color: #10B981; color: #F0FDFA; }
+.status-closed { background-color: #6B7280; color: #F3F4F6; }
+.status-paid { background-color: #10B981; color: #F0FDFA; }
+.status-pending { background-color: #F59E0B; color: #FFFBEB; }
+.status-failed { background-color: #EF4444; color: #FEF2F2; }
+
+/* Ticket Reply Styles (Client Panel) */
+.client-ticket-reply {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #4B5563; /* Gray-600 */
+}
+.client-ticket-reply.admin-reply { /* Admin's reply to client */
+    background-color: #272F3E; /* Slightly different dark for admin */
+    border-left: 3px solid #4F46E5; /* Indigo accent */
+    text-align: left;
+}
+.client-ticket-reply.client-reply { /* Client's own reply */
+    background-color: #374151; /* Gray-700 for client */
+    border-right: 3px solid #60A5FA; /* Blue accent for client */
+    text-align: right; /* Align client messages to the right */
+}
+.client-ticket-reply-author {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #A5B4FC; /* Indigo-300 for author */
+    margin-bottom: 0.25rem;
+}
+.client-ticket-reply.client-reply .client-ticket-reply-author {
+    color: #93C5FD; /* Lighter blue for client author */
+}
+.client-ticket-reply-timestamp {
+    font-size: 0.65rem;
+    color: #9CA3AF; /* Gray-400 */
+    margin-left: 0.5rem;
+}
+.client-ticket-reply.client-reply .client-ticket-reply-timestamp {
+    margin-left: 0;
+    margin-right: 0.5rem;
+}
+.client-ticket-reply-message {
+    font-size: 0.875rem;
+    color: #D1D5DB; /* Gray-300 */
+    white-space: pre-wrap;
+    text-align: left; /* Ensure message text is left-aligned within its container */
+}
+
+
+.dropdown { position: relative; display: inline-block; }
+.dropdown-content {
+    display: none; position: absolute; background-color: #374151;
+    min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3);
+    z-index: 60; border-radius: 0.5rem;
+    border: 1px solid #4B5563;
+    top: 100%; left: 0; margin-top: 0.25rem;
+}
+.dropdown-content a {
+    color: #D1D5DB; padding: 0.5rem 1rem; text-decoration: none;
+    display: block; font-size: 0.875rem; white-space: nowrap;
+    border-radius: 0.375rem;
+}
+.dropdown-content a:hover { background-color: #4B5563; color: #F3F4F6; }
+.dropdown.active .dropdown-content { display: block; }
+.alert-item-clickable { cursor: pointer; }
+.alert-item-clickable:hover { opacity: 0.85; }
+
+/* Unified Button Styles */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 500; padding: 0.625rem 1rem;
+    border-radius: 0.5rem; /* Consistent rounding for all buttons */
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+.btn-primary { background-color: #4F46E5; color: white; } /* Indigo-600 */
+.btn-primary:hover { background-color: #4338CA; } /* Indigo-700 */
+.btn-secondary { background-color: #374151; color: #D1D5DB; border-color: #4B5563; }
+.btn-secondary:hover { background-color: #4B5563; border-color: #6B7280;}
+.btn-danger { background-color: #DC2626; color: white; }
+.btn-danger:hover { background-color: #B91C1C; }
+.btn-success { background-color: #059669; color: white; }
+.btn-success:hover { background-color: #047857; }
+.btn-purple { background-color: #7C3AED; color: white; } /* Purple-600 */
+.btn-purple:hover { background-color: #6D28D9; } /* Purple-700 */
+.btn-sky { background-color: #0EA5E9; color: white; }
+.btn-sky:hover { background-color: #0284C7; }
+.btn-cyan { background-color: #06B6D4; color: white; }
+.btn-cyan:hover { background-color: #0891B2; }
+.btn-orange { background-color: #F97316; color: white; }
+.btn-orange:hover { background-color: #EA580C; }
+.btn-teal { background-color: #14B8A6; color: white; }
+.btn-teal:hover { background-color: #0D9488; }
+
+header {
+    background-color: #1F2937;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    color: #D1D5DB;
+}
+#page-title { color: #F3F4F6; }
+#menu-button { color: #9CA3AF; }
+.text-gray-600 { color: #9CA3AF; }
+.text-gray-700 { color: #D1D5DB; }
+.text-gray-800 { color: #E5E7EB; }
+.text-gray-900 { color: #F3F4F6; }
+
+.sidebar .text-indigo-400 { color: #818CF8; }
+.sidebar .text-indigo-300 { color: #A5B4FC; }
+.stat-card .bg-indigo-100 { background-color: rgba(129, 140, 248, 0.2); }
+.stat-card .text-indigo-500 { color: #818CF8; }
+.stat-card .bg-green-100 { background-color: rgba(16, 185, 129, 0.2); }
+.stat-card .text-green-500 { color: #34D399; }
+.stat-card .bg-yellow-100 { background-color: rgba(245, 159, 11, 0.2); }
+.stat-card .text-yellow-500 { color: #FBBF24; }
+.stat-card .bg-red-100 { background-color: rgba(239, 68, 68, 0.2); }
+.stat-card .text-red-500 { color: #F87171; }
+
+.rounded-xl { border-radius: 0.75rem; }
+.text-indigo-600 { color: #818CF8; }
+.text-indigo-600:hover { color: #A5B4FC; }
+.text-green-600 { color: #34D399; }
+.text-green-600:hover { color: #6EE7B7; }
+.border-gray-300 { border-color: #4B5563; }
+.focus\:ring-indigo-500:focus { --tw-ring-color: #4F46E5; }
+.focus\:border-indigo-500:focus { border-color: #4F46E5; }
+
+/* Alert item colors - Adjusted for better contrast on dark theme */
+.alert-item-clickable.bg-red-100 { background-color: #7f1d1d; color: #fecaca; }
+.alert-item-clickable.text-red-700 { color: #fecaca; }
+.alert-item-clickable.bg-yellow-100 { background-color: #713f12; color: #fef08a; }
+.alert-item-clickable.text-yellow-700 { color: #fef08a; }
+.alert-item-clickable.bg-blue-100 { background-color: #1e40af; color: #bfdbfe; }
+.alert-item-clickable.text-blue-700 { color: #bfdbfe; }
+.alert-item-clickable.bg-green-100 { background-color: #065f46; color: #a7f3d0; }
+.alert-item-clickable.text-green-700 { color: #a7f3d0; }
+.alert-item-clickable.bg-purple-100 { background-color: #581c87; color: #e9d5ff; }
+.alert-item-clickable.text-purple-700 { color: #e9d5ff; }
+.alert-item-clickable.bg-orange-100 { background-color: #7c2d12; color: #fed7aa; }
+.alert-item-clickable.text-orange-700 { color: #fed7aa; }
+.alert-item-clickable.bg-teal-100 { background-color: #134e4a; color: #99f6e4; }
+.alert-item-clickable.text-teal-700 { color: #99f6e4; }
+.alert-item-clickable.bg-pink-100 { background-color: #831843; color: #fbcfe8; }
+.alert-item-clickable.text-pink-700 { color: #fbcfe8; }
+
+#message-box {
+    background-color: #374151;
+    color: #F3F4F6;
+    border: 1px solid #4B5563;
+}
+#close-message-box { color: #9CA3AF; }
+#close-message-box:hover { color: #D1D5DB; }
+
+/* --- Notification System Styles (Client Panel) --- */
+#notification-bell-button {
+    position: relative; /* For badge positioning */
+}
+
+#notification-count-badge {
+    position: absolute;
+    top: -0.35rem; /* Adjust for desired overlap */
+    right: -0.35rem; /* Adjust for desired overlap */
+    min-width: 1rem; /* Ensure it's circular even for single digit */
+    height: 1rem;
+    padding: 0 0.25rem; /* Horizontal padding for numbers like "9+" */
+    border-radius: 9999px; /* full */
+    background-color: #EF4444; /* red-500 */
+    color: white;
+    font-size: 0.65rem; /* text-xs */
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1; /* Ensure text is centered vertically */
+    pointer-events: none; /* So clicks go through to the bell */
+}
+
+#notification-dropdown-panel {
+    /* Base styles are in HTML (Tailwind), these are enhancements */
+    background-color: rgba(31, 41, 55, 0.85); /* bg-gray-800 with opacity */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(8px); /* Safari */
+    border: 1px solid rgba(55, 65, 81, 0.7); /* border-gray-700 with opacity */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+#notification-dropdown-panel.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+#notification-items-list li {
+    transition: background-color 0.15s ease-in-out;
+}
+#notification-items-list li:hover {
+    background-color: rgba(55, 65, 81, 0.7); /* hover:bg-gray-700 with opacity */
+}
+
+#notification-items-list li .text-gray-100 { /* For unread message text */
+    color: #E5E7EB;
+}
+#notification-items-list li.opacity-70 .text-gray-400 { /* For read message text */
+    color: #9CA3AF;
+}
+
+/* Scrollbar for notification list - already styled globally, but can be specific if needed */
+#notification-items-list::-webkit-scrollbar { width: 6px; }
+#notification-items-list::-webkit-scrollbar-track { background: rgba(55, 65, 81, 0.5); } /* gray-700 */
+#notification-items-list::-webkit-scrollbar-thumb { background: rgba(107, 114, 128, 0.7); } /* gray-500 */
+#notification-items-list::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.9); } /* gray-400 */

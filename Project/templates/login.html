@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title if title else 'Login' }} - DomainHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="login-container w-full max-w-md p-8 rounded-lg shadow-xl">
+        <div class="text-center mb-8">
+            <svg class="mx-auto h-16 w-auto text-white" viewBox="0 0 169.83 211.95" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <path d="M49.47,211.95c37.22-3.11,62.5-21.47,62.12-61.35-.07-19.65-9.74-41.09-28.47-48.12v-.65c16.29-9.44,24.97-24.59,24.71-45.29C107.16,17.8,80.73-.44,40,0h129.82v211.94H49.47Z"/>
+                    <path d="M65.65,148.72c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                    <path d="M65.65,63.78c-.02,17.47-11.04,26.67-28.76,26.52,0,0-36.89,0-36.89,0v-53.11h36.89c17.61-.21,28.73,9.42,28.76,26.59Z"/>
+                </g>
+            </svg>
+            <h2 class="mt-6 text-3xl font-bold tracking-tight text-white">Sign in to DomainHub</h2>
+            <p class="mt-2 text-sm text-gray-400">
+                Access your client or admin panel
+            </p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login_page') }}" class="space-y-6">
+            {{ form.hidden_tag() }} <div>
+                {{ form.username.label(class="form-label block text-sm font-medium leading-6") }}
+                <div class="mt-2">
+                    {{ form.username(class="input-field block w-full rounded-md py-2.5 shadow-sm sm:text-sm sm:leading-6", placeholder="Enter your username") }}
+                </div>
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.password.label(class="form-label block text-sm font-medium leading-6") }}
+                <div class="mt-2">
+                    {{ form.password(class="input-field block w-full rounded-md py-2.5 shadow-sm sm:text-sm sm:leading-6", placeholder="Enter your password") }}
+                </div>
+                 {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div>
+                {{ form.submit(class="btn-submit flex w-full justify-center rounded-md px-3 py-2.5 text-sm font-semibold leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500") }}
+            </div>
+        </form>
+
+        <p class="mt-8 text-center text-sm text-gray-400">
+            Don't have an account? Please contact an administrator.
+        </p>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // This small script can remain inline or be moved to a very small login.js if preferred
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

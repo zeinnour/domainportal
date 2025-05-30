@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { background-color: #ef4444; /* Red for overdue */ color: #ffffff; padding: 10px 20px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center; }
+        .content { padding: 20px; line-height: 1.6; }
+        .footer { text-align: center; padding: 15px; font-size: 0.9em; color: #777; }
+        .button { display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #8b5cf6; color: #ffffff; text-decoration: none; border-radius: 5px; }
+        .invoice-details { background-color: #fef2f2; border-left: 3px solid #ef4444; padding: 15px; margin-top: 10px; }
+        .invoice-details p { margin: 5px 0; }
+        strong { color: #333; }
+        .highlight { color: #dc2626; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Invoice Overdue Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ client_name }},</p>
+            <p>This is a reminder that invoice <span class="highlight">{{ invoice_number }}</span> is now overdue. The due date was {{ invoice_due_date }}.</p>
+            <div class="invoice-details">
+                <p><strong>Invoice Number:</strong> {{ invoice_number }}</p>
+                <p><strong>Description:</strong> {{ invoice_description }}</p>
+                <p><strong>Amount Due:</strong> ${{ invoice_amount }}</p>
+                <p><strong>Days Overdue:</strong> {{ days_overdue }} day(s)</p>
+            </div>
+            <p>Please make the payment at your earliest convenience to avoid any disruption to your services. You can view and pay your invoice through your client portal.</p>
+            <p style="text-align:center;">
+                <a href="{{ portal_url }}" class="button">View Invoice</a>
+            </p>
+            <p>If you have already made this payment, please disregard this notice or contact us with your payment details.</p>
+            <p>Thank you,<br>The DomainHub Team</p>
+        </div>
+        <div class="footer">
+            &copy; {{ current_year }} DomainHub. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

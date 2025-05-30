@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { background-color: #ef4444; /* Red for rejection */ color: #ffffff; padding: 10px 20px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center; }
+        .content { padding: 20px; line-height: 1.6; }
+        .footer { text-align: center; padding: 15px; font-size: 0.9em; color: #777; }
+        .button { display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #8b5cf6; color: #ffffff; text-decoration: none; border-radius: 5px; }
+        strong { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Proof Update</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ client_name }},</p>
+            <p>There was an issue with the payment proof you submitted for invoice <strong>{{ invoice_number }}</strong> ({{ item_description }}).</p>
+            <p>Our team has reviewed it and requires further attention. The status of the proof submission is: <strong>Rejected</strong>.</p>
+            
+            {% if admin_notes %}
+            <p><strong>Administrator Notes:</strong></p>
+            <p style="background-color: #f9f9f9; border-left: 3px solid #ef4444; padding: 10px; margin-top: 5px;">
+                {{ admin_notes }}
+            </p>
+            {% endif %}
+
+            <p>Your invoice is still marked as 'Pending Payment'. Please log in to your portal for more details or contact support if you have any questions or wish to submit new proof.</p>
+            <p style="text-align:center;">
+                <a href="{{ portal_url }}" class="button">Go to Billing Section</a>
+            </p>
+            <p>Thank you,<br>The DomainHub Team</p>
+        </div>
+        <div class="footer">
+            &copy; {{ current_year }} DomainHub. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
